@@ -1,0 +1,42 @@
+name: Go CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: ${{ matrix.os }} / Go ${{ matrix.go }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        go: ['1.22.x', stable]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Configurar Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache: false
+      - name: Verificar formatação
+        shell: bash
+        run: |
+          files=$(gofmt -l cmd internal)
+          if [ -n "$files" ]; then
+            printf '%s\n' "$files"
+            exit 1
+          fi
+      - name: Análise estática
+        run: go vet ./...
+      - name: Testes
+        run: go test ./...
+      - name: Detectar condições de corrida
+        if: runner.os == 'Linux'
+        run: go test -race ./...
+      - name: Compilar
+        run: go build ./...

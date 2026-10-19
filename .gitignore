@@ -1,0 +1,5 @@
+/.tools/
+/data/
+/bin/
+/coverage.out
+*.exe
