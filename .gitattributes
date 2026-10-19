@@ -1,0 +1,7 @@
+* text=auto
+
+# Preserve o formato usado pelo gofmt também em checkouts no Windows.
+*.go text eol=lf
+go.mod text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
